@@ -224,6 +224,13 @@ $layouts = Layout::findAll();
 
 </form>
 <?php
+if ($messages = Flash::get('messages')):
+            echo '<ul>';
+            foreach ( $messages as $message ) echo '<li class="' . $message[0] . '">' . $message[1] . '</li>';
+            echo '</ul>';
+endif;
+
+
 if ( $structure !== NULL ):
         $preview = new View(CsvImportController::VIEW_FOLDER.'preview', array(
             'structure' => $structure,

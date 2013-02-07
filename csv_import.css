@@ -1,4 +1,10 @@
 #body_plugin_csv_import p { font-size: 12px }
+
+#body_plugin_csv_import .info       {color: #88F; background-color: #CCF;}
+#body_plugin_csv_import .error      {color: #F00; background-color: #FCC;}
+#body_plugin_csv_import .warning    {color: #F80; background-color: #FDA;}
+#body_plugin_csv_import .success    {color: #080; background-color: #CFC;}
+
 #body_plugin_csv_import .full {width: 100%}
 #body_plugin_csv_import .half {width: 50%}
 #body_plugin_csv_import .quarter {width: 25%}
@@ -24,7 +30,7 @@
 
 #raw-preview-container,
 #table-preview-container {
-    max-height: 160px;
+    max-height: 240px;
     min-height: 40px;
     overflow: auto;
     padding: 4px 8px;

@@ -1,11 +1,14 @@
 CSV Import for Wolf CMS
 ======================
 
-Plugin for importing **.csv**, **.tsv** and **.txt** spreadsheet exported files into Wolf CMS pages and parts.
+Plugin for importing **.csv**, **.tsv** and **.txt** data from
+exported spreadsheet files. Data rows are converted into Wolf CMS
+pages and parts.
 
-This plugin provides a convenient way to import **Excel** / **Open Office Calc** table into Wolf CMS. All you need to do is:
+This plugin provides a convenient way to import **Excel** and
+**Open Office Calc** tables into Wolf CMS. All you need to do is:
 
-1. Export the spreadsheet to one of supported **.csv**, **.tsv** or **.txt** formats,
+1. Export the spreadsheet to one of supported formats _(csv,tsv,txt)_,
 2. Upload the file to **[CMS_ROOT]/public** folder
 3. Tweak some import settings like:
    - column **delimeter** character _(usually a comma, semicolon or tabulator)_
@@ -13,7 +16,7 @@ This plugin provides a convenient way to import **Excel** / **Open Office Calc**
    - **escape character** _(usually backslash but Excel seems to use double quote)_
    - **character encoding** _(like WINDOWS-1252, ISO-8859-2, etc.)_
    - imported file **locale** _(like pl_PL, en_US, de_AT, etc.)_
-
+4. 
 Adjusting those settings will most likely lead to valid table interpretation. If everything is OK you can import new pages and page parts.
 
 The plugin automatically assigns some columns values to Page properties. Columns which cannot become page properties can be added as page parts.
