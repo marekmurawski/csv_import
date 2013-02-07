@@ -227,6 +227,7 @@ $layouts = Layout::findAll();
 if ( $structure !== NULL ):
         $preview = new View(CsvImportController::VIEW_FOLDER.'preview', array(
             'structure' => $structure,
+            'filename' => $filename,
             ));
         $preview->display();
 

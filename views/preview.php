@@ -4,11 +4,7 @@
         <br/>
         <?php echo __( 'Locale' ); ?>: <b><?php echo setlocale(LC_ALL,0); ?></b>
     </p>
-    <div id="raw-preview-container" class="full">
-        <pre><?php
-    echo htmlentities($structure['raw_file'],ENT_COMPAT ,'UTF-8');
-    ?></pre>
-    </div>
+
     <div id="table-preview-container" class="full">
         <table class="preview">
             <thead>
@@ -27,6 +23,7 @@
                 ?>
             </thead>
             <?php
+            $now_datetime = date( 'Y-m-d H:i:s' );
             $current_row = 0;
             foreach ( $structure['contents'] as $rows ):
                 $current_row += 1;
@@ -48,7 +45,6 @@
                         if ( ($column_name ==='slug') && $valid_slug!==$cell ) {
                             $cell_override = CsvImportController::slugify ( $cell );
                         }
-
                         if ($column_name==='breadcrumb' && strlen($cell)===0) {
                             $cell_override = $valid_slug;
                         }
@@ -56,6 +52,14 @@
                             $cell_override = $valid_slug;
                         }
 
+                        if (    $column_name==='created_on'  ||
+                                $column_name==='published_on'  ||
+                                $column_name==='valid_until'
+                            )
+                        {
+                        if ( !CsvImportController::checkDateTime( $cell ) )
+                            $cell_override = $now_datetime;
+                        }
                     //check required fields
                     $requiredClass = ( $column_name == 'slug' ) ? 'required' : '';
 
@@ -72,4 +76,10 @@
             endforeach;
             ?>
         </table>
+    </div>
+    <h3>Raw file preview: <?php echo $filename; ?></h3>
+    <div id="raw-preview-container" class="full">
+        <pre><?php
+    echo htmlentities($structure['raw_file'],ENT_COMPAT ,'UTF-8');
+    ?></pre>
     </div>

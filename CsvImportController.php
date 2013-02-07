@@ -10,19 +10,18 @@ class CsvImportController extends PluginController {
     const VIEW_FOLDER = "../../plugins/csv_import/views/";
 
     public static $options = array(
-        'firstColumnAsTitle' => true,
-        'firstRowAsHeaders' => true,
         'encoding' => 'WINDOWS-1250',
         'folder' => 'public',
         'escape' => 'backslash',
         'delimeter' => 'semicolon',
         'enclosure' => 'doublequote',
         'status_id' => Page::STATUS_PUBLISHED,
-        'layout_id' => 1,
-        'is_protected' => 0,
-        'needs_login' => 2,
+        'layout_id' => '1',
+        'is_protected' => '0',
+        'needs_login' => '2',
         'behavior_id' => '',
         'file_locale' => '',
+        'create_empty_parts' => '1',
     );
     public static $translators = array(
         'comma' => ",",
@@ -394,11 +393,7 @@ class CsvImportController extends PluginController {
 
         setlocale( LC_ALL, $locale_variants );
 
-
-
-        if ( isset( $_POST['import'] ) ) {
-            ///echo '<pre>' . print_r( $_POST, true ) . '</pre>';
-            /////////////////////////////////////
+        if ( isset( $_POST['import'] ) || isset( $_POST['preview'] ) ) {
             if ( !isset( $_POST['filename'] ) ) {
                 Flash::set( 'error', __( 'File not specified' ) );
                 redirect( get_url( 'plugin/csv_import' ) );
@@ -411,12 +406,15 @@ class CsvImportController extends PluginController {
                 Flash::set( 'error', __( 'File not found: :file:', array( ':file:' => $filename ) ) );
                 redirect( get_url( 'plugin/csv_import' ) );
             }
-            /////////////////////////////////////
+        }
+
+
+        if ( isset( $_POST['import'] ) ) {
             $user_id = AuthUser::getId();
             $parent_page_id = (int) $_POST['parent_page_id'];
             $now_datetime = date( 'Y-m-d H:i:s' );
 
-            // USED SLUGS
+            // USED SLUGS - store duplicate slugs in table
             $used_slugs = array( );
 
             $structure = $this->getStructure( $source );
@@ -429,7 +427,8 @@ class CsvImportController extends PluginController {
                 if ( in_array( 'slug', $headers ) ) {
                     $key = array_search( 'slug', $headers );
                     $the_slug = CsvImportController::slugify( $row[$key] );
-                } else die('No slug!');
+                } else
+                    die( 'No slug!' );
 
                 if ( !in_array( $the_slug, $used_slugs ) ) {
                     echo 'IMPORTING ' . $the_slug . '<br/>';
@@ -444,7 +443,7 @@ class CsvImportController extends PluginController {
                         foreach ( $headers as $head_key => $head_name ) {
                             if ( in_array( $head_name, self::$importablePageFields ) ) {
                                 // set all fields except SLUG
-                                $new_page->$head_name = trim($row[$head_key]);
+                                $new_page->$head_name = trim( $row[$head_key] );
                             }
                         }
 
@@ -470,10 +469,10 @@ class CsvImportController extends PluginController {
                         if ( !self::checkDateTime( $new_page->valid_until ) )
                             $new_page->valid_until = $now_datetime;
 
-                        if (strlen($new_page->breadcrumb)===0) {
+                        if ( strlen( $new_page->breadcrumb ) === 0 ) {
                             $new_page->breadcrumb = $new_page->slug;
                         }
-                        if (strlen($new_page->title)===0) {
+                        if ( strlen( $new_page->title ) === 0 ) {
                             $new_page->title = $new_page->slug;
                         }
 
@@ -485,23 +484,31 @@ class CsvImportController extends PluginController {
                             echo 'PAGE IMPORTED: ' . $new_page->slug . '<br/>';
 
                             foreach ( $part_names as $head_key => $part_name ) {
-                                if ( !in_array( $head_name, self::$defaultPageFields ) ) {
+                                if ( !in_array( $part_name, self::$defaultPageFields ) ) {
+                                    if ( CsvImportController::checkPartName( $part_name ) ) {
+                                        $new_page_part = new PagePart();
+                                        $new_page_part->name = $part_name;
 
-                                    $new_page_part = new PagePart();
-                                    $new_page_part->name = $headers[$head_key];
+                                        ////////////////////////////// NEW PAGE PART ID!!!!!!!!!!!!!!!
+                                        $new_page_part->page_id = $new_page->id();
+                                        $new_page_part->filter_id = Setting::get( 'default_filter_id' );
 
-                                    ////////////////////////////// NEW PAGE PART ID!!!!!!!!!!!!!!!
-                                    $new_page_part->page_id = $new_page->id();
-                                    $new_page_part->filter_id = Setting::get( 'default_filter_id' );
-                                    if ( strlen( trim( $row[$head_key] ) ) === 0 && self::$options['create_empty_parts'] === '1' ) {
-                                        $new_page_part->content = $row[$head_key];
-                                        if ( $new_page_part->save() ) {
-                                            echo '===> PART IMPORTED for [' . $parent_page_id . '] with name ' . $new_page_part->name . '<br/>';
+                                        if ( strlen( trim( $row[$head_key] ) ) === 0 && self::$options['create_empty_parts'] === '1' ) {
+                                            if (isset($row[$head_key])) {
+                                                $new_page_part->content = $row[$head_key];
+                                            } else {
+                                                $new_page_part->content = '';
+                                            }
+
+                                            if ( $new_page_part->save() ) {
+                                                echo '===> PART IMPORTED for [' . $parent_page_id . '] with name ' . $new_page_part->name . '<br/>';
+                                            } else
+                                                echo '!!!! FAILED TO SAVE PART ' . $new_page_part->name . ' for page [' . $parent_page_id . ']<br/>';
                                         } else
-                                            echo '!!!! PART NOT IMPORTED for [' . $parent_page_id . '] with name ' . $new_page_part->name . '<br/>';
+                                            echo '!!!! PART EMPTY ' . $new_page_part->name . ' - NOT ADDED' . '<br/>';
+                                        //$new_page_part->content_html = Filter::$row[$head_key];
                                     } else
-                                        echo '!!!! PART EMPTY ' . $new_page_part->name . ' - NOT ADDED' . '<br/>';
-                                    //$new_page_part->content_html = Filter::$row[$head_key];
+                                        echo '!!!! INVALID PART NAME - ' . $headers[$head_key] . '<br/>';
                                 } else
                                     echo '!!!! PART NAME forbidden - ' . $headers[$head_key] . '<br/>';
                             }
@@ -517,32 +524,16 @@ class CsvImportController extends PluginController {
             }
         }
         if ( isset( $_POST['preview'] ) ) {
-            //echo '<pre>' . print_r( $_POST, true ) . '</pre>';
-            ////////////////////////////////////////////////
-            if ( !isset( $_POST['filename'] ) ) {
-                Flash::set( 'error', __( 'File not specified' ) );
-                redirect( get_url( 'plugin/csv_import' ) );
-            };
-
-            $filename = trim( $_POST['filename'] );
-            $source = CMS_ROOT . $this->getFolder() . DS . $filename;
-
-            if ( !file_exists( $source ) ) {
-                Flash::set( 'error', __( 'File not found: :file:', array( ':file:' => $filename ) ) );
-                redirect( get_url( 'plugin/csv_import' ) );
-            }
-            ////////////////////////////////////////////////
-
-
             $structure = $this->getStructure( $source );
-
 
             $this->display( 'csv_import/views/index', array(
                 'pagesList' => self::$pagesList,
                 'options' => self::$options,
                 'directory' => $this->getFolder(),
                 'files' => $this->getFiles( $this->getFolder() ),
+
                 'structure' => $structure,
+                'filename' => $_POST['filename'],
             ) );
         }
         else {
@@ -692,7 +683,7 @@ class CsvImportController extends PluginController {
         $str = str_replace( ' ', '-', $str );
 
         $str = iconv( 'UTF-8', 'ASCII//TRANSLIT//IGNORE', $str );
-        $str = trim($str);
+        $str = trim( $str );
         $str = mb_strtolower( $str, 'UTF-8' );
         $str = preg_replace( '/[^a-zA-Z0-9\-\.]/', '-', $str );
         $str = preg_replace( '/-{2,}/', '-', $str );
@@ -700,7 +691,7 @@ class CsvImportController extends PluginController {
     }
 
     public static function checkPartName( $param ) {
-        return ( preg_match( "/[^a-zA-Z0-9\-\+_\.]/", $param ) !== 1 );
+        return ( preg_match( "/[^a-zA-Z0-9\-_]/", $param ) !== 1 );
     }
 
     public static function checkDateTime( $sDate ) {
