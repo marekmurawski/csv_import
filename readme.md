@@ -14,7 +14,10 @@ This plugin provides a convenient way to import **Excel** / **Open Office Calc**
    - **character encoding** _(like WINDOWS-1252, ISO-8859-2, etc.)_
    - imported file **locale** _(like pl_PL, en_US, de_AT, etc.)_
 
-If the first row of your table contains one of the following fields:
+Adjusting those settings will most likely lead to valid table interpretation. If everything is OK you can import new pages and page parts.
+
+The plugin automatically assigns some columns values to Page properties. Columns which cannot become page properties can be added as page parts.
+If your table contains one of the following columns:
 
 - slug - **required** _(and only rows with unique slugs will be imported)_
 - title
@@ -26,9 +29,8 @@ If the first row of your table contains one of the following fields:
 - valid_until
 - tags
 
-The Page properties will be set accordingly to those fields. Any other properly named _(english letters + digits)_ columns will be added as **Page Parts**.
+..the imported Page properties will be set accordingly to those fields. Any other properly named _(english letters, digits, dash and underscore)_ columns will be added as **Page Parts**.
 
-Adjusting those settings will most likely lead to valid table interpretation. If everything is OK you can import new pages and page parts.
 
 Installation
 ------------
