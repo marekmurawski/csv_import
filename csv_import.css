@@ -1,0 +1,89 @@
+#body_plugin_csv_import p { font-size: 12px }
+#body_plugin_csv_import .full {width: 100%}
+#body_plugin_csv_import .half {width: 50%}
+#body_plugin_csv_import .quarter {width: 25%}
+#body_plugin_csv_import .three-quarters{width: 75%}
+#body_plugin_csv_import .text-center {text-align: center}
+#body_plugin_csv_import table { border-collapse: collapse; font-size: 12px }
+#body_plugin_csv_import table.settings { width: 100%; }
+
+#body_plugin_csv_import table td,
+#body_plugin_csv_import table th,
+#body_plugin_csv_import table.preview td,
+#body_plugin_csv_import table.preview th { min-width: 30px; vertical-align: middle; padding: 2px; }
+
+#body_plugin_csv_import table.preview td {background: #EEE; border: 1px solid #888;}
+#body_plugin_csv_import table.preview td.required {background: orange; }
+#body_plugin_csv_import table.preview td.empty {background: #CCC; }
+#body_plugin_csv_import table.preview td.required.empty {background: orangered; }
+
+#body_plugin_csv_import table.preview th {background: #bbb; border: 1px solid #888;}
+#body_plugin_csv_import table.preview th.importable {background: green; border: 1px solid #888;}
+#body_plugin_csv_import label { text-align: right; width: 100%; display: block}
+
+#raw-preview-container,
+#table-preview-container {
+    max-height: 160px;
+    min-height: 40px;
+    overflow: auto;
+    padding: 4px 8px;
+}
+
+#raw-preview-container {
+    background-color: #EEE;
+    max-height: 80px;
+    min-height: 32px;
+}
+
+
+#body_plugin_csv_import input,
+#body_plugin_csv_import textarea,
+#body_plugin_csv_import select {
+    border: 1px solid #AAA;
+    font-size: 12px;
+    outline: none;
+    padding: 0px;
+    border-radius: 0px;
+    box-shadow: inset 0 2px 2px rgba(180,180,180,.5);
+    margin: 0px;
+    height: auto;
+}
+
+#body_plugin_csv_import input:focus,
+#body_plugin_csv_import textarea:focus,
+#body_plugin_csv_import select:focus {background: #ffffcc; border: 1px solid #f80; margin: 0px;}
+
+#body_plugin_csv_import input:hover,
+#body_plugin_csv_import textarea:hover,
+#body_plugin_csv_import select:hover {background: #ffffdd; margin: 0px;}
+
+#body_plugin_csv_import select {
+   padding: 0px;
+   -webkit-appearance: none;
+   -moz-appearance: none;
+    appearance: none;
+    background: rgb(224,224,224);
+    background: -moz-linear-gradient(top,  rgba(224,224,224,1) 0%, rgba(188,188,188,1) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(224,224,224,1)), color-stop(100%,rgba(188,188,188,1)));
+    background: -webkit-linear-gradient(top,  rgba(224,224,224,1) 0%,rgba(188,188,188,1) 100%);
+    background: -o-linear-gradient(top,  rgba(224,224,224,1) 0%,rgba(188,188,188,1) 100%);
+    background: -ms-linear-gradient(top,  rgba(224,224,224,1) 0%,rgba(188,188,188,1) 100%);
+    background: linear-gradient(top,  rgba(224,224,224,1) 0%,rgba(188,188,188,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0e0e0', endColorstr='#bcbcbc',GradientType=0 );
+}
+
+#body_plugin_csv_import textarea {resize: vertical; height: 56px;}
+#body_plugin_csv_import textarea.partedit {color: #6B0; background: #120; box-shadow: none; font-family: "Monaco", "Courier", serif; }
+#body_plugin_csv_import textarea.partedit:hover {color: #8F0; background: black;}
+
+#body_plugin_csv_import input.error {border: 1px solid red;}
+#body_plugin_csv_import input.success {border: 1px solid blue;}
+
+#body_plugin_csv_import input[type=button],
+#body_plugin_csv_import input[type=submit],
+#body_plugin_csv_import input[type=reset]
+{position: relative; padding: 3px 5px; box-shadow: inset 2px 2px 2px rgba(255,255,255,.5); background: #fB4; }
+#body_plugin_csv_import input[type=button]:hover,
+#body_plugin_csv_import input[type=submit]:hover,
+#body_plugin_csv_import input[type=reset]:hover
+{background: #f80; }
