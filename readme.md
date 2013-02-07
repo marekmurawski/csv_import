@@ -1,19 +1,19 @@
 CSV Import for Wolf CMS
 ======================
 
-Plugin for importing *.csv*, *.tsv* and *.txt* spreadsheet exported files into Wolf CMS pages and parts.
+Plugin for importing **.csv**, **.tsv** and **.txt** spreadsheet exported files into Wolf CMS pages and parts.
 
-This plugin provides a convenient way to import Excel / Open Office table into Wolf CMS. All you need to do is export the spreadsheet to one of supported *.csv*, *.tsv* or *.txt* formats, upload the file to "public" folder and tweak some import settings like:
+This plugin provides a convenient way to import **Excel** / **Open Office Calc** table into Wolf CMS. All you need to do is export the spreadsheet to one of supported **.csv**, **.tsv** or **.txt** formats, upload the file to **[CMS_ROOT]/public"** folder and tweak some import settings like:
 
-- column delimeter character _(usually a comma, semicolon or tabulator)_
-- cell enclosure character _(usually double- or single-quote)_
-- escape character _(usually backslash - \, but Excel seems to use double quote)_
-- character encoding _(like WINDOWS-1252, ISO-8859-2, etc.)_
-- file locale _(like pl_PL, en_US, de_AT, etc.)_
+- column **delimeter** character _(usually a comma, semicolon or tabulator)_
+- cell contents **enclosure** character _(usually double- or single-quote)_
+- **escape character** _(usually backslash but Excel seems to use double quote)_
+- **character encoding** _(like WINDOWS-1252, ISO-8859-2, etc.)_
+- imported file **locale** _(like pl_PL, en_US, de_AT, etc.)_
 
 If the first row of your table contains one of the following fields:
 
-- slug (required)
+- slug - **required** _(and only rows with unique slugs will be imported)_
 - title
 - breadcrumb
 - keywords
@@ -23,9 +23,9 @@ If the first row of your table contains one of the following fields:
 - valid_until
 - tags
 
-The Page properties will be set accordingly to those fields. Any other properly named (english letters + digits) columns will be added as *Page Parts*.
+The Page properties will be set accordingly to those fields. Any other properly named _(english letters + digits)_ columns will be added as **Page Parts**.
 
-Adjusting those settings will most likely lead to valid table interpretation. If everything is OK you can import new pages and page parts
+Adjusting those settings will most likely lead to valid table interpretation. If everything is OK you can import new pages and page parts.
 
 Installation
 ------------
