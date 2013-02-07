@@ -14,23 +14,47 @@
             <thead>
                 <?php
                 echo '<tr>' . PHP_EOL;
+                echo '<th class="text-center">#</th>' . PHP_EOL;
                 foreach ( $structure['header'] as $key => $cell ) {
-                    echo (in_array($cell, CsvImportController::$importablePageFields)) ? '<th class="importable">' : '<th>';
-                        if ( ($cell == 'slug') && CsvImportController::checkPartName ( $cell )!==$cell ) {
-//                                $this->failure(__('Invalid characters in page part name. Only english letters and + - . _ are allowed'));
-                                  //Flash::setNow('csv_warning')
-                        }
-                    echo $cell . '</th>';
+                    $hClass = '';
+                    if ( in_array($cell, CsvImportController::$importablePageFields)) $hClass=' importable';
+                    if ( !CsvImportController::checkPartName ( $cell ) ) { $hClass = ' invalid'; }
+                    echo '<th class="'.$hClass.'">';
+                    echo $cell;
+                    echo '</th>';
                 }
                 echo '</tr>' . PHP_EOL;
                 ?>
             </thead>
             <?php
+            $current_row = 0;
             foreach ( $structure['contents'] as $rows ):
+                $current_row += 1;
+                if ( in_array( 'slug', $structure['header'] ) ) {
+                            $key = array_search( 'slug', $structure['header'] );
+                            $valid_slug = CsvImportController::slugify( $rows[$key] );
+                        }
+
                 echo '<tr>' . PHP_EOL;
+                echo '<td class="text-center">' . $current_row .'</td>' . PHP_EOL;
+
                 foreach ( $rows as $key => $cell ) {
+                    $cell_override = false;
                     $cell = trim($cell);
+
+
                     $column_name = $structure['header'][$key];
+
+                        if ( ($column_name ==='slug') && $valid_slug!==$cell ) {
+                            $cell_override = CsvImportController::slugify ( $cell );
+                        }
+
+                        if ($column_name==='breadcrumb' && strlen($cell)===0) {
+                            $cell_override = $valid_slug;
+                        }
+                        if ($column_name==='title' && strlen($cell)===0) {
+                            $cell_override = $valid_slug;
+                        }
 
                     //check required fields
                     $requiredClass = ( $column_name == 'slug' ) ? 'required' : '';
@@ -38,10 +62,10 @@
                     $emptyClass = (strlen($cell)===0) ? ' empty' : '';
 
                     echo '<td class="' . $requiredClass . $emptyClass . '">';
-                    echo '<div class="text-center">' . htmlentities($cell,ENT_COMPAT,'UTF-8') . '</div>';
-                        if ( ($column_name == 'slug') && CsvImportController::slugify ( $cell )!==$cell ) {
-                            echo '<div class="text-center">&dArr;</div><div class="text-center" style="color: red"><b>' . CsvImportController::slugify ( $cell ) . '</b></div>';
-                        }
+                    echo '<div>' . htmlentities($cell,ENT_COMPAT,'UTF-8') . '</div>';
+                    if ($cell_override) {
+                    echo '<div class="text-center">&dArr;</div><div class="text-center" style="color: red"><b>' . $cell_override . '</b></div>';
+                    }
                     echo '</td>';
                 }
                 echo '</tr>' . PHP_EOL;

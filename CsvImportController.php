@@ -413,6 +413,7 @@ class CsvImportController extends PluginController {
             }
             /////////////////////////////////////
             $user_id = AuthUser::getId();
+            $parent_page_id = (int) $_POST['parent_page_id'];
             $now_datetime = date( 'Y-m-d H:i:s' );
 
             // USED SLUGS
@@ -421,56 +422,67 @@ class CsvImportController extends PluginController {
             $structure = $this->getStructure( $source );
             $headers = $structure['header'];
             $part_names = array_diff( $headers, self::$defaultPageFields );
+            $current_row = 1;
             foreach ( $structure['contents'] as $row ) {
+                $current_row += 1;
 
                 if ( in_array( 'slug', $headers ) ) {
-                    $key = array_search('slug', $headers);
+                    $key = array_search( 'slug', $headers );
                     $the_slug = CsvImportController::slugify( $row[$key] );
-                }
-                echo '<pre>===========================</pre>';
+                } else die('No slug!');
 
-                if ( Record::findOneFrom( 'Page', 'slug=?', array( $the_slug ) ) !== false ) {
+                if ( !in_array( $the_slug, $used_slugs ) ) {
+                    echo 'IMPORTING ' . $the_slug . '<br/>';
+                    if ( isset( $existingPage ) )
+                        unset( $existingPage );
+                    $existingPage = Record::findOneFrom( 'Page', 'slug=? AND parent_id=?', array( $the_slug, $parent_page_id ) );
 
-                    $new_page = new Page();
-                    // setting importable values
-                    foreach ( $headers as $head_key => $head_name ) {
-                        if ( in_array( $head_name, self::$importablePageFields ) ) {
-                            // set all fields except SLUG
-                            $new_page->$head_name = $row[$head_key];
+                    if ( !$existingPage ) {
+
+                        $new_page = new Page();
+                        // setting importable values
+                        foreach ( $headers as $head_key => $head_name ) {
+                            if ( in_array( $head_name, self::$importablePageFields ) ) {
+                                // set all fields except SLUG
+                                $new_page->$head_name = trim($row[$head_key]);
+                            }
                         }
-                    }
 
 
-                    // fix slug
-                    $new_page->slug = $the_slug;
-                    // globally set values
-                    $new_page->parent_id = (int) $_POST['root_page'];
-                    $new_page->layout_id = (int) self::$options['layout_id'];
-                    $new_page->status_id = (int) self::$options['status_id'];
-                    $new_page->is_protected = (int) self::$options['is_protected'];
-                    $new_page->behavior_id = (int) self::$options['behavior_id'];
-                    $new_page->needs_login = (int) self::$options['needs_login'];
-                    $new_page->created_by_id = $user_id;
-                    $new_page->position = '0';
-                    //$new_page->updated_by_id = $user_id;
+                        // fix slug
+                        $new_page->slug = $the_slug;
+                        // globally set values
+                        $new_page->parent_id = $parent_page_id;
+                        $new_page->layout_id = (int) self::$options['layout_id'];
+                        $new_page->status_id = (int) self::$options['status_id'];
+                        $new_page->is_protected = (int) self::$options['is_protected'];
+                        $new_page->behavior_id = (int) self::$options['behavior_id'];
+                        $new_page->needs_login = (int) self::$options['needs_login'];
+                        $new_page->created_by_id = $user_id;
+                        $new_page->position = '0';
+                        //$new_page->updated_by_id = $user_id;
 
 
-                    if ( !self::checkDateTime( $new_page->created_on ) )
-                        $new_page->created_on = $now_datetime;
-                    if ( !self::checkDateTime( $new_page->published_on ) )
-                        $new_page->published_on = $now_datetime;
-                    if ( !self::checkDateTime( $new_page->valid_until ) )
-                        $new_page->valid_until = $now_datetime;
+                        if ( !self::checkDateTime( $new_page->created_on ) )
+                            $new_page->created_on = $now_datetime;
+                        if ( !self::checkDateTime( $new_page->published_on ) )
+                            $new_page->published_on = $now_datetime;
+                        if ( !self::checkDateTime( $new_page->valid_until ) )
+                            $new_page->valid_until = $now_datetime;
 
+                        if (strlen($new_page->breadcrumb)===0) {
+                            $new_page->breadcrumb = $new_page->slug;
+                        }
+                        if (strlen($new_page->title)===0) {
+                            $new_page->title = $new_page->slug;
+                        }
 
-                    //echo '<pre>' . var_export( $new_page, true ) . '</pre>';
-                    if ( !in_array( $new_page->slug, $used_slugs ) ) {
+                        //echo '<pre>' . var_export( $new_page, true ) . '</pre>';
                         if ( $new_page->save() ) {
 
                             //store slug
                             $used_slugs[] = $new_page->slug;
-                            echo '<pre>==== PAGE SAVED: ' . $new_page->slug . '===========================</pre>';
-                            //echo '<pre>' . print_r( $part_names, true ) . '</pre>';
+                            echo 'PAGE IMPORTED: ' . $new_page->slug . '<br/>';
 
                             foreach ( $part_names as $head_key => $part_name ) {
                                 if ( !in_array( $head_name, self::$defaultPageFields ) ) {
@@ -481,22 +493,24 @@ class CsvImportController extends PluginController {
                                     ////////////////////////////// NEW PAGE PART ID!!!!!!!!!!!!!!!
                                     $new_page_part->page_id = $new_page->id();
                                     $new_page_part->filter_id = Setting::get( 'default_filter_id' );
-
-                                    $new_page_part->content = $row[$head_key];
-                                    if ( $new_page_part->save() ) {
-                                        echo '<pre>=== PART-SAVED: ' . $new_page_part->name . ' ==== ' . print_r( $new_page_part, true ) . '</pre>';
+                                    if ( strlen( trim( $row[$head_key] ) ) === 0 && self::$options['create_empty_parts'] === '1' ) {
+                                        $new_page_part->content = $row[$head_key];
+                                        if ( $new_page_part->save() ) {
+                                            echo '===> PART IMPORTED for [' . $parent_page_id . '] with name ' . $new_page_part->name . '<br/>';
+                                        } else
+                                            echo '!!!! PART NOT IMPORTED for [' . $parent_page_id . '] with name ' . $new_page_part->name . '<br/>';
                                     } else
-                                        echo 'Page part not saved:' . $new_page_part->name;
+                                        echo '!!!! PART EMPTY ' . $new_page_part->name . ' - NOT ADDED' . '<br/>';
                                     //$new_page_part->content_html = Filter::$row[$head_key];
                                 } else
-                                    echo 'Page not saved';
+                                    echo '!!!! PART NAME forbidden - ' . $headers[$head_key] . '<br/>';
                             }
                         } else
-                            echo 'Page not saved';
+                            echo '!!!! Page not saved' . '<br/>';
                     } else
-                        echo 'Duplicate slug in imported table: ' . $new_page->slug . ', row: AAAAAA';
+                        echo '!!!! Page with slug : ' . $the_slug . ' ALREADY EXISTS as child of [' . $parent_page_id . '] !!' . '<br/>';
                 } else
-                    echo 'Page with slug : ' . $the_slug . ' ALREADY EXISTS!!';
+                    echo '!!!! DUPLICATE SLUG in imported table: ' . $the_slug . ', row: ' . $current_row;
 
                 //Flash::set( 'success', __( 'Imported') );
                 //redirect( get_url( 'plugin/csv_import' ) );
@@ -660,7 +674,7 @@ class CsvImportController extends PluginController {
                 $childCount = self::countAllChildren( $childpage->id );
                 if ( true ) {
                     self::$pagesList[] = array(
-                        'label' => str_replace( " ", "- ", str_pad( ' ', $nestLevel, " ", STR_PAD_LEFT ) ) . ' ' . $childpage->breadcrumb,
+                        'label' => str_replace( " ", "- ", str_pad( ' ', $nestLevel, " ", STR_PAD_LEFT ) ) . ' ' . $childpage->title,
                         'id' => $childpage->id,
                         'count' => $childCount,
                     );
@@ -673,10 +687,12 @@ class CsvImportController extends PluginController {
 
     public static function slugify( $str ) {
         $forbiddenChars = array( '#', '$', '%', '^', '&', '*', '!', '~', '"', '\'', '=', '?', '/', '[', ']', '(', ')', '|', '<', '>', ';', ':', '\\' );
+
         $str = str_replace( $forbiddenChars, '', $str );
         $str = str_replace( ' ', '-', $str );
 
         $str = iconv( 'UTF-8', 'ASCII//TRANSLIT//IGNORE', $str );
+        $str = trim($str);
         $str = mb_strtolower( $str, 'UTF-8' );
         $str = preg_replace( '/[^a-zA-Z0-9\-\.]/', '-', $str );
         $str = preg_replace( '/-{2,}/', '-', $str );

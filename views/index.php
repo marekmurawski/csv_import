@@ -127,10 +127,10 @@ $layouts = Layout::findAll();
                                 <label><?php echo __( 'Parent page' ) ?></label>
                             </td>
                             <td colspan="3">
-                                <select name="root_page" id="csv_import-pageslist" class="full">
-                                    <option value="1"><?php echo __( 'Root page' ); ?></option>
+                                <select name="parent_page_id" id="csv_import-pageslist" class="full">
+                                    <option disabled="disabled"><?php echo __( 'Root page' ); ?></option>
                                     <?php foreach ( $pagesList as $k ): ?>
-                                        <option value="<?php echo $k['id'] ?>"<?php echo ($k['id'] == $_POST['root_page']) ? ' selected="selected"' : ''; ?>><?php echo $k['label'] . ' (' . $k['count'] . ')' ?></option>
+                                        <option value="<?php echo $k['id'] ?>"<?php echo ($k['id'] == $_POST['parent_page_id']) ? ' selected="selected"' : ''; ?>><?php echo $k['label'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </td>

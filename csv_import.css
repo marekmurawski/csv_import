@@ -15,10 +15,11 @@
 #body_plugin_csv_import table.preview td {background: #EEE; border: 1px solid #888;}
 #body_plugin_csv_import table.preview td.required {background: orange; }
 #body_plugin_csv_import table.preview td.empty {background: #CCC; }
-#body_plugin_csv_import table.preview td.required.empty {background: orangered; }
+#body_plugin_csv_import table.preview td.required.empty {background: red; }
 
 #body_plugin_csv_import table.preview th {background: #bbb; border: 1px solid #888;}
 #body_plugin_csv_import table.preview th.importable {background: green; border: 1px solid #888;}
+#body_plugin_csv_import table.preview th.invalid {background: red; border: 1px solid #888;}
 #body_plugin_csv_import label { text-align: right; width: 100%; display: block}
 
 #raw-preview-container,
