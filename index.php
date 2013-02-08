@@ -1,19 +1,33 @@
 <?php
 
+/*
+ * CSV Import Plugin for Wolf CMS
+ * Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and page parts.
+ *
+ * @package Plugins
+ * @subpackage multiedit
+ *
+ * @author Marek Murawski <http://marekmurawski.pl>
+ * @copyright Marek Murawski, 2013
+ * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
+ */
+
 /* Security measure */
-if (!defined('IN_CMS')) { exit(); }
+if ( !defined( 'IN_CMS' ) ) {
+    exit();
+}
 
 
-Plugin::setInfos(array(
-    'id'          => 'csv_import',
-    'title'       => __('CSV Spreadsheet Import'),
-    'description' => __('Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and parts'),
-    'version'     => '0.0.1',
-   	'license'     => 'GPL',
-	'author'      => 'Marek Murawski',
-    'website'     => 'http://marekmurawski.pl/',
-    'update_url'  => 'http://marekmurawski.pl/static/wolfplugins/plugin-versions.xml',
-    'require_wolf_version' => '0.7.3'
-));
+Plugin::setInfos( array(
+            'id'                   => 'csv_import',
+            'title'                => __( 'CSV Spreadsheet Import' ),
+            'description'          => __( 'Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and parts' ),
+            'version'              => '0.0.1',
+            'license'              => 'GPL',
+            'author'               => 'Marek Murawski',
+            'website'              => 'http://marekmurawski.pl/',
+            'update_url'           => 'http://marekmurawski.pl/static/wolfplugins/plugin-versions.xml',
+            'require_wolf_version' => '0.7.3'
+) );
 
-Plugin::addController('csv_import', __('CSV Import'), 'admin_edit', true);
+Plugin::addController( 'csv_import', __( 'CSV Import' ), 'admin_edit', true );

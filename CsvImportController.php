@@ -1,4 +1,15 @@
 <?php
+/*
+ * CSV Import Plugin for Wolf CMS
+ * Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and page parts.
+ *
+ * @package Plugins
+ * @subpackage multiedit
+ *
+ * @author Marek Murawski <http://marekmurawski.pl>
+ * @copyright Marek Murawski, 2013
+ * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
+ */
 
 /* Security measure */
 if ( !defined( 'IN_CMS' ) ) {
@@ -283,9 +294,17 @@ class CsvImportController extends PluginController {
 
     public function __construct() {
         $this->setLayout( 'backend' );
-        $this->assignToLayout( 'sidebar', new View( '../../plugins/csv_import/views/sidebar' ) );
+        $lang = ( $user = AuthUser::getRecord() ) ? strtolower( $user->language ) : 'en';
+        if ( !file_exists( PLUGINS_ROOT . DS . 'csv_import/views/documentation/sidebar/' . $lang . '.php' ) ) {
+            $lang            = 'en';
+        }
+        $sidebarContents = new View( self::VIEW_FOLDER . 'documentation/sidebar/' . $lang );
+        $this->assignToLayout( 'sidebar', new View( self::VIEW_FOLDER . 'sidebar', array(
+                                'sidebarContents' => $sidebarContents
+                    ) ) );
 
     }
+
 
     /**
      *
@@ -295,6 +314,7 @@ class CsvImportController extends PluginController {
         return '/' . self::$options['folder'];
 
     }
+
 
     /**
      *
@@ -306,6 +326,7 @@ class CsvImportController extends PluginController {
 
     }
 
+
     /**
      *
      * @return string
@@ -315,6 +336,7 @@ class CsvImportController extends PluginController {
         return self::$translators[$key];
 
     }
+
 
     /**
      *
@@ -326,6 +348,7 @@ class CsvImportController extends PluginController {
 
     }
 
+
     /**
      *
      * @return string
@@ -335,6 +358,7 @@ class CsvImportController extends PluginController {
         return self::$translators[$key];
 
     }
+
 
     /**
      * Retrieve options from Wolf settings
@@ -349,6 +373,7 @@ class CsvImportController extends PluginController {
         }
 
     }
+
 
     /**
      * Retrieve options from $_POST['options'] global
@@ -408,7 +433,7 @@ class CsvImportController extends PluginController {
         self::setSavedOptions();
 
         // get options override from $_POST
-        self::setPostOptions( $_POST['options'] );
+        self::setPostOptions();
 
         // setting locale for string / date conversions
         // trying different variants...

@@ -1,3 +1,16 @@
+<?php
+/*
+ * CSV Import Plugin for Wolf CMS
+ * Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and page parts.
+ *
+ * @package Plugins
+ * @subpackage multiedit
+ *
+ * @author Marek Murawski <http://marekmurawski.pl>
+ * @copyright Marek Murawski, 2013
+ * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
+ */
+?>
 <p>
     <?php echo __( 'Columns' ); ?>: <b><?php echo $structure['col_count']; ?></b>,
     <?php echo __( 'Rows' ); ?>: <b><?php echo $structure['row_count']; ?></b>
@@ -16,7 +29,7 @@
                 if ( in_array( $cell, CsvImportController::$importablePageFields ) )
                     $hClass = ' importable';
                 if ( !CsvImportController::checkPartName( $cell ) ) {
-                    $hClass = ' invalid';
+                    $hClass       = ' invalid';
                 }
                 echo '<th class="' . $hClass . '">';
                 echo $cell;
@@ -27,11 +40,11 @@
         </thead>
         <?php
         $now_datetime = '<span style="white-space:nowrap">' . date( 'Y-m-d H:i:s' ) . '</span>';
-        $current_row = 0;
+        $current_row  = 0;
         foreach ( $structure['contents'] as $rows ):
             $current_row += 1;
             if ( in_array( 'slug', $structure['header'] ) ) {
-                $key = array_search( 'slug', $structure['header'] );
+                $key        = array_search( 'slug', $structure['header'] );
                 $valid_slug = CsvImportController::slugify( $rows[$key] );
             }
 
@@ -40,7 +53,7 @@
 
             foreach ( $rows as $key => $cell ) {
                 $cell_override = false;
-                $cell = trim( $cell );
+                $cell          = trim( $cell );
 
 
                 $column_name = $structure['header'][$key];
@@ -73,8 +86,7 @@
                 if ( $cell_override ) {
                     $delO = '<del>';
                     $delC = '</del>';
-                }
-                else {
+                } else {
                     $delO = '';
                     $delC = '';
                 }

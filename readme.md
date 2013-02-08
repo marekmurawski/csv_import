@@ -16,10 +16,11 @@ This plugin provides a convenient way to import **Excel** and
    - **escape character** _(usually backslash but Excel seems to use double quote)_
    - **character encoding** _(like WINDOWS-1252, ISO-8859-2, etc.)_
    - imported file **locale** _(like pl_PL, en_US, de_AT, etc.)_
-4. 
-Adjusting those settings will most likely lead to valid table interpretation. If everything is OK you can import new pages and page parts.
+4. Adjusting those settings will most likely lead to valid table interpretation.
+5. If everything is OK you can import new pages and page parts.
 
-The plugin automatically assigns some columns values to Page properties. Columns which cannot become page properties can be added as page parts.
+The plugin automatically assigns some columns values to Page properties.
+Columns which cannot become page properties can be added as page parts.
 If your table contains one of the following columns:
 
 - slug - **required** _(and only rows with unique slugs will be imported)_
@@ -32,7 +33,9 @@ If your table contains one of the following columns:
 - valid_until
 - tags
 
-..the imported Page properties will be set accordingly to those fields. Any other properly named _(english letters, digits, dash and underscore)_ columns will be added as **Page Parts**.
+..the imported Page properties will be set accordingly to those fields.
+Any other properly named _(latin letters, digits, dash and underscore)_
+columns will be added as **Page Parts**.
 
 
 Installation
