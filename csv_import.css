@@ -37,7 +37,7 @@
 }
 
 #raw-preview-container {
-    background-color: #EEE;
+    background-color: #DDD;
     max-height: 80px;
     min-height: 32px;
 }
@@ -94,3 +94,9 @@
 #body_plugin_csv_import input[type=submit]:hover,
 #body_plugin_csv_import input[type=reset]:hover
 {background: #f80; }
+
+
+#body_plugin_csv_import label.large,
+#body_plugin_csv_import input.large,
+#body_plugin_csv_import select.large
+{font-size: 16px;}

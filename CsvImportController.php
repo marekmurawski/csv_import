@@ -23,7 +23,7 @@ class CsvImportController extends PluginController {
     const VIEW_FOLDER = "../../plugins/csv_import/views/";
 
     public static $options = array(
-                'encoding'           => 'WINDOWS-1252',
+                'encoding'           => 'WINDOWS-1250',
                 'folder'             => 'public',
                 'escape'             => 'doublequote',
                 'delimeter'          => 'semicolon',
@@ -35,6 +35,8 @@ class CsvImportController extends PluginController {
                 'behavior_id'        => '',
                 'file_locale'        => 'en_US.UTF-8',
                 'create_empty_parts' => '1',
+                'default_filter'     => '',
+                'fileurl'            => 'http://marekmurawski.pl/static/wolfplugins/csv_import/sample_excel2000_export.csv',
     );
     public static $translators         = array(
                 'comma'       => ",",
@@ -124,17 +126,9 @@ class CsvImportController extends PluginController {
                 'breadcrumb',
                 'keywords',
                 'description',
-//                                            'behavior_id',
-//                                            'status_id',
                 'created_on',
                 'published_on',
                 'valid_until',
-//                                            'updated_on',
-//                                            'created_by_id',
-//                                            'updated_by_id',
-//                                            'position',
-//                                            'is_protected',
-//                                            'needs_login',
                 'tags',
     );
     private static $pagesList = array( );
@@ -210,6 +204,17 @@ class CsvImportController extends PluginController {
     /**
      * Retrieve options from $_POST['options'] global
      */
+    public static function setSavedOptions() {
+        if ( $opts = Plugin::getAllSettings('csv_import') ) {
+            foreach ( $opts as $k => $v ) {
+                self::$options[$k] = $v;
+            }
+        }
+
+    }
+    /**
+     * Retrieve options from $_POST['options'] global
+     */
     public static function setPostOptions() {
         if ( isset( $_POST['options'] ) ) {
             $arr = $_POST['options'];
@@ -242,16 +247,23 @@ class CsvImportController extends PluginController {
         $header    = array_shift( $contents );
         $row_count = count( $contents );
 
+        foreach ($contents as $k => $v) {
+            if (count($v) < count($header)) {
+                for ( $i = 0; $i < count( $header ) - count($v); $i++ ) {
+                    $contents[$k][] = '';
+                }
+            }
+        }
         // remove last empty row
-        if ( (count( $contents[$row_count - 1] )) < 2 ) {
+        //if ( (count( $contents[$row_count - 1] )) < 2 ) {
             array_pop( $contents );
             $row_count--;
-        }
+        //}
 
         return array(
                     'col_count' => count( $header ),
                     'row_count' => $row_count,
-                    'raw_file'  => $raw_file,
+                    'raw_file'  => $trans_file,
                     'header'    => $header,
                     'contents'  => $contents,
         );
@@ -294,13 +306,18 @@ class CsvImportController extends PluginController {
                 redirect( get_url( 'plugin/csv_import' ) );
             };
 
-            $filename = trim( $_POST['filename'] );
-            $source   = CMS_ROOT . $this->getFolder() . DS . $filename;
-
-            if ( !file_exists( $source ) ) {
-                Flash::set( 'error', __( 'File not found: :file:', array( ':file:' => $filename ) ) );
-                redirect( get_url( 'plugin/csv_import' ) );
+            if ( strlen( trim( $_POST['options']['fileurl'] ) ) > 0 ) {
+                $filename = 'URL';
+                $source   = $_POST['options']['fileurl'];
+            } else {
+                $filename = trim( $_POST['filename'] );
+                $source   = CMS_ROOT . $this->getFolder() . DS . $filename;
+                if ( !file_exists( $source ) ) {
+                    Flash::set( 'error', __( 'File not found: :file:', array( ':file:' => $filename ) ) );
+                    redirect( get_url( 'plugin/csv_import' ) );
+                }
             }
+
 
             if ( !$parent_page_id = (int) $_POST['parent_page_id'] ) {
                 Flash::set( 'error', __( 'Parent page not specified' ) );
@@ -355,6 +372,9 @@ class CsvImportController extends PluginController {
                     Flash::set( 'error', __( 'Column "slug" not found in table!' ) );
                     redirect( get_url( 'plugin/csv_import' ) );
                 }
+
+                // check for empty slugs
+                if (strlen($the_slug)>0) {
 
                 if ( !in_array( $the_slug, $used_slugs ) ) {
 
@@ -414,7 +434,8 @@ class CsvImportController extends PluginController {
 
                                 $new_page_part->name      = $part_name;
                                 $new_page_part->page_id   = $new_page->id();
-                                $new_page_part->filter_id = Setting::get( 'default_filter_id' );
+                                // ========================== TODO: allow per column overrides
+                                $new_page_part->filter_id = self::$options['default_filter'];
 
                                 if ( (strlen( trim( $row[$head_key] ) ) !== 0) || self::$options['create_empty_parts'] === '1' ) {
                                     if ( isset( $row[$head_key] ) ) {
@@ -453,8 +474,13 @@ class CsvImportController extends PluginController {
                 } else
                     $messages[] = array( 'warning',
                                 __( 'Row' ) . ' ' . $current_row . ': ' .
-                                'DUPLICATE SLUG - <b>' . $the_slug . '</b> '
+                                'DUPLICATE SLUG - <b>' . $the_slug . '</b> - row ignored!'
                     );
+                } else
+                            $messages[] = array( 'error',
+                                        __( 'Row' ) . ' ' . $current_row . ': ' .
+                                        'EMPTY SLUG - row ignored!'
+                            );
 
                 Flash::setNow( 'messages', $messages );
             }
@@ -471,7 +497,7 @@ class CsvImportController extends PluginController {
                         'directory' => $this->getFolder(),
                         'files'     => $this->getFiles( $this->getFolder() ),
                         'structure' => $structure,
-                        'filename'  => $_POST['filename'],
+                        'filename'  => $filename,
             ) );
         } else {
             $this->display( 'csv_import/views/index', array(

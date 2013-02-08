@@ -10,9 +10,10 @@
  * @copyright Marek Murawski, 2013
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
+$messages=array();
 ?>
 <h3><?php echo __( 'Import preview' ); ?>: <?php echo $filename; ?></h3>
-<p><?php echo __( 'Please review the table to see if data will be correctly interpreted. Pay special attention language-specific characters, quotes, commas etc. If data isn\'t displayed correctly, change settings above.' ); ?></p>
+<p><?php echo __( 'Please review the table to see if data will be correctly interpreted. Pay special attention to <i>language-specific characters, quotes, commas etc</i>. If data isn\'t displayed correctly, change settings above.' ); ?></p>
 <p>
     <?php echo __( 'columns' ); ?>: <b><?php echo $structure['col_count']; ?></b>,
     <?php echo __( 'rows' ); ?>: <b><?php echo $structure['row_count']; ?></b>,
@@ -85,6 +86,11 @@
 
                 echo '<td class="' . $requiredClass . $emptyClass . '">';
                 if ( $cell_override ) {
+                        $messages[] = array( 'info',
+                                                __('Row'). ': <b>' . $current_row . '</b> - ' .
+                                                __( 'Cell' ) . ' <b>'. $column_name .'</b> ' .
+                                                __('will be replaced with'). ' <b>' . $cell_override . '</b>'
+                        );
                     $delO = '<del>';
                     $delC = '</del>';
                 } else {
@@ -93,7 +99,7 @@
                 }
                 echo '<div>' . $delO . htmlentities( $cell, ENT_COMPAT, 'UTF-8' ) . $delC . '</div>';
                 if ( $cell_override ) {
-                    echo '<div style="color: red">&rArr;<b>' . $cell_override . '</b></div>';
+                    echo '<div style="color: red" title="'.__('this cell will be replaced').'"><b>' . $cell_override . '</b></div>';
                 }
                 echo '</td>';
             }
@@ -102,6 +108,11 @@
         ?>
     </table>
 </div>
+<?php
+ if (count($messages)>0) {
+     Flash::setNow('messages', $messages);
+ }
+?>
 <h3><?php echo __( 'Raw file preview' ); ?>: <?php echo $filename; ?></h3>
 <div id="raw-preview-container" class="full">
     <pre><?php

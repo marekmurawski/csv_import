@@ -20,7 +20,7 @@ if ( !defined( 'IN_CMS' ) ) {
 
 Plugin::setInfos( array(
             'id'                   => 'csv_import',
-            'title'                => __( 'CSV Spreadsheet Import' ),
+            'title'                => __( 'CSV Import' ),
             'description'          => __( 'Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and parts' ),
             'version'              => '0.0.1',
             'license'              => 'GPL',
