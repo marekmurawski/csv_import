@@ -22,7 +22,7 @@ Plugin::setInfos( array(
             'id'                   => 'csv_import',
             'title'                => __( 'CSV Import' ),
             'description'          => __( 'Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and parts' ),
-            'version'              => '0.1.0',
+            'version'              => '0.1.1',
             'license'              => 'GPL',
             'author'               => 'Marek Murawski',
             'website'              => 'http://marekmurawski.pl/',
