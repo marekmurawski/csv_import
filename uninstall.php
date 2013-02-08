@@ -18,7 +18,7 @@ if ( !defined( 'IN_CMS' ) ) {
 }
 
 if ( Plugin::deleteAllSettings( 'csv_import' ) ) {
-    Flash::set( 'success', __( 'Plugin settings deleted saved!' ) );
+    Flash::set( 'success', __( 'Plugin settings deleted!' ) );
 } else {
     Flash::set( 'error', __( 'Error deleting plugin settings!' ) );
 }

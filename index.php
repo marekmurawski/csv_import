@@ -22,12 +22,12 @@ Plugin::setInfos( array(
             'id'                   => 'csv_import',
             'title'                => __( 'CSV Import' ),
             'description'          => __( 'Import .csv, .tsv and .txt spreadsheet files into Wolf CMS pages and parts' ),
-            'version'              => '0.0.1',
+            'version'              => '0.1.0',
             'license'              => 'GPL',
             'author'               => 'Marek Murawski',
             'website'              => 'http://marekmurawski.pl/',
             'update_url'           => 'http://marekmurawski.pl/static/wolfplugins/plugin-versions.xml',
-            'require_wolf_version' => '0.7.3'
+            'require_wolf_version' => '0.7.3' // 0.7.5SP-1 fix -> downgrading requirement to 0.7.3
 ) );
 
 Plugin::addController( 'csv_import', __( 'CSV Import' ), 'admin_edit', true );

@@ -16,5 +16,5 @@
 if ( !defined( 'IN_CMS' ) ) {
     exit();
 }
-
+    Flash::set( 'success', __( 'Succesfully activated csv_import plugin!' ) );
 exit();
