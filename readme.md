@@ -46,7 +46,11 @@ CSV Import Plugin can be installed into your WolfCMS by uploading it to ***CMS_R
 Changelog
 ---------
 
-0.0.1
+0.1.2
+
+- valid_until field bugfix
+
+0.1.1
 
 - first release
 

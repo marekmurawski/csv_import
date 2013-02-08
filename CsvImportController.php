@@ -416,8 +416,8 @@ class CsvImportController extends PluginController {
                         if ( !self::checkDateTime( $new_page->published_on ) )
                             $new_page->published_on = $now_datetime;
 
-                        if ( strlen( $new_page->valid_until ) > 0 && CsvImportController::checkDateTime( $new_page->valid_until ) ) {
-                            $new_page->valid_until  = $now_datetime;
+                        if ( strlen( $new_page->valid_until ) > 0 && !CsvImportController::checkDateTime( $new_page->valid_until ) ) {
+                            $new_page->valid_until  = NULL;
                         }
 
                         //$new_page->updated_by_id = $user_id;
