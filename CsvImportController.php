@@ -301,7 +301,7 @@ class CsvImportController extends PluginController {
         setlocale( LC_ALL, $locale_variants );
 
         if ( isset( $_POST['import'] ) || isset( $_POST['preview'] ) ) {
-            if ( !isset( $_POST['filename'] ) ) {
+            if ( (!isset( $_POST['filename'] )) && (strlen( trim( $_POST['options']['fileurl'] ) ) === 0) ) {
                 Flash::set( 'error', __( 'File not specified' ) );
                 redirect( get_url( 'plugin/csv_import' ) );
             };

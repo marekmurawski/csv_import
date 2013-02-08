@@ -10,7 +10,7 @@
  * @copyright Marek Murawski, 2013
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
-$messages=array();
+$messages = array( );
 ?>
 <h3><?php echo __( 'Import preview' ); ?>: <?php echo $filename; ?></h3>
 <p><?php echo __( 'Please review the table to see if data will be correctly interpreted. Pay special attention to <i>language-specific characters, quotes, commas etc</i>. If data isn\'t displayed correctly, change settings above.' ); ?></p>
@@ -63,6 +63,14 @@ $messages=array();
                 if ( ($column_name === 'slug') && $valid_slug !== $cell ) {
                     $cell_override = CsvImportController::slugify( $cell );
                 }
+
+                if ( ($column_name === 'slug') && (strlen( $cell ) === 0) && (strlen( $cell_override ) === 0) ) {
+                    $messages[] = array( 'warning',
+                                __( 'Row' ) . ': <b>' . $current_row . '</b> - ' .
+                                'SLUG EMPTY! - <b>row will be ignored</b>'
+                    );
+                }
+
                 if ( $column_name === 'breadcrumb' && strlen( $cell ) === 0 ) {
                     $cell_override = $valid_slug;
                 }
@@ -86,11 +94,11 @@ $messages=array();
 
                 echo '<td class="' . $requiredClass . $emptyClass . '">';
                 if ( $cell_override ) {
-                        $messages[] = array( 'info',
-                                                __('Row'). ': <b>' . $current_row . '</b> - ' .
-                                                __( 'Cell' ) . ' <b>'. $column_name .'</b> ' .
-                                                __('will be replaced with'). ' <b>' . $cell_override . '</b>'
-                        );
+                    $messages[] = array( 'info',
+                                __( 'Row' ) . ': <b>' . $current_row . '</b> - ' .
+                                __( 'Cell' ) . ' <b>' . $column_name . '</b> ' .
+                                __( 'will be replaced with' ) . ' <b>' . $cell_override . '</b>'
+                    );
                     $delO = '<del>';
                     $delC = '</del>';
                 } else {
@@ -99,7 +107,7 @@ $messages=array();
                 }
                 echo '<div>' . $delO . htmlentities( $cell, ENT_COMPAT, 'UTF-8' ) . $delC . '</div>';
                 if ( $cell_override ) {
-                    echo '<div style="color: red" title="'.__('this cell will be replaced').'"><b>' . $cell_override . '</b></div>';
+                    echo '<div style="color: red" title="' . __( 'this cell will be replaced' ) . '"><b>' . $cell_override . '</b></div>';
                 }
                 echo '</td>';
             }
@@ -109,13 +117,13 @@ $messages=array();
     </table>
 </div>
 <?php
- if (count($messages)>0) {
-     Flash::setNow('messages', $messages);
- }
+if ( count( $messages ) > 0 ) {
+    Flash::setNow( 'messages', $messages );
+}
 ?>
 <h3><?php echo __( 'Raw file preview' ); ?>: <?php echo $filename; ?></h3>
 <div id="raw-preview-container" class="full">
     <pre><?php
-        echo htmlentities( $structure['raw_file'], ENT_COMPAT, 'UTF-8' );
-        ?></pre>
+echo htmlentities( $structure['raw_file'], ENT_COMPAT, 'UTF-8' );
+?></pre>
 </div>
