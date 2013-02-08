@@ -216,18 +216,18 @@ $layouts = Layout::findAll();
                 </table>
             </td>
             <td class="quarter">
-                <ul>
-                    <?php foreach ( CsvImportController::$importablePageFields as $field ): ?>
-                        <li><?php echo $field; ?></li>
-                    <?php endforeach; ?>
-                </ul>
+
             </td>
         </tr>
         <tr>
             <td class="three-quarters">
-                <input type="submit" value="Preview" name="preview" />
-                <input type="submit" value="Import" name="import" />
-                <input type="submit" value="Save default settings" name="save_settings" />
+                <?php if (isset($_POST['preview'])): ?>
+                <input type="submit" value="<?php echo __( 'Refresh' ); ?>" name="preview" />
+                <input type="submit" value="<?php echo __( 'Import' ); ?>" name="import" />
+                <input type="submit" value="<?php echo __( 'Save default settings' ); ?>" name="save_settings" />
+                <?php else: ?>
+                <input type="submit" value="<?php echo __( 'Preview' ); ?>" name="preview" />
+                <?php endif; ?>
             </td>
             <td class="quarter">
             </td>

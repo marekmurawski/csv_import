@@ -11,11 +11,12 @@
  * @license http://www.gnu.org/licenses/gpl.html GPLv3 license
  */
 ?>
+<h3><?php echo __( 'Import preview' ); ?>: <?php echo $filename; ?></h3>
+<p><?php echo __( 'Please review the table to see if data will be correctly interpreted. Pay special attention language-specific characters, quotes, commas etc. If data isn\'t displayed correctly, change settings above.' ); ?></p>
 <p>
-    <?php echo __( 'Columns' ); ?>: <b><?php echo $structure['col_count']; ?></b>,
-    <?php echo __( 'Rows' ); ?>: <b><?php echo $structure['row_count']; ?></b>
-    <br/>
-    <?php echo __( 'Locale' ); ?>: <b><?php echo setlocale( LC_ALL, 0 ); ?></b>
+    <?php echo __( 'columns' ); ?>: <b><?php echo $structure['col_count']; ?></b>,
+    <?php echo __( 'rows' ); ?>: <b><?php echo $structure['row_count']; ?></b>,
+    <?php echo __( 'locale' ); ?>: <b><?php echo setlocale( LC_ALL, 0 ); ?></b>
 </p>
 
 <div id="table-preview-container" class="full">
@@ -101,7 +102,7 @@
         ?>
     </table>
 </div>
-<h3>Raw file preview: <?php echo $filename; ?></h3>
+<h3><?php echo __( 'Raw file preview' ); ?>: <?php echo $filename; ?></h3>
 <div id="raw-preview-container" class="full">
     <pre><?php
         echo htmlentities( $structure['raw_file'], ENT_COMPAT, 'UTF-8' );

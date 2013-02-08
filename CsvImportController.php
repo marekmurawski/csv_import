@@ -22,9 +22,9 @@ class CsvImportController extends PluginController {
     const VIEW_FOLDER = "../../plugins/csv_import/views/";
 
     public static $options = array(
-                'encoding'           => 'WINDOWS-1250',
+                'encoding'           => 'WINDOWS-1252',
                 'folder'             => 'public',
-                'escape'             => 'backslash',
+                'escape'             => 'doublequote',
                 'delimeter'          => 'semicolon',
                 'enclosure'          => 'doublequote',
                 'status_id'          => Page::STATUS_PUBLISHED,
@@ -32,7 +32,7 @@ class CsvImportController extends PluginController {
                 'is_protected'       => '0',
                 'needs_login'        => '2',
                 'behavior_id'        => '',
-                'file_locale'        => '',
+                'file_locale'        => 'en_US.UTF-8',
                 'create_empty_parts' => '1',
     );
     public static $translators         = array(
@@ -380,6 +380,7 @@ class CsvImportController extends PluginController {
      */
     public static function setPostOptions() {
         if ( isset( $_POST['options'] ) ) {
+            $arr = $_POST['options'];
             foreach ( $arr as $k => $v ) {
                 self::$options[$k] = $v;
             }
@@ -390,12 +391,15 @@ class CsvImportController extends PluginController {
 
     private function getStructure( $source_path ) {
 
-        $raw_file   = file_get_contents( $source_path );
-        $trans_file = iconv( $this->getEncoding(), "UTF-8", $raw_file );
+        $raw_file = file_get_contents( $source_path );
 
-        $contents = $this->csvToArray(
-                    $trans_file, $this->getEscape(), $this->getEnclosure(), $this->getDelimeter()
-        );
+        if ( $this->getEncoding() !== 'UTF-8' ) {
+            $trans_file = iconv( $this->getEncoding(), "UTF-8", $raw_file );
+        } else {
+            $trans_file = $raw_file;
+        }
+
+        $contents = $this->csvToArray( $trans_file, $this->getEscape(), $this->getEnclosure(), $this->getDelimeter() );
 
         $header    = array_shift( $contents );
         $row_count = count( $contents );
