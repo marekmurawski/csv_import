@@ -95,7 +95,7 @@ $layouts = Layout::findAll();
 
                             </td>
                             <td class="quarter">
-                                <label for="options-encoding"><?php echo __( 'File character encoding' ); ?></label>
+                                <label for="options-encoding"><?php echo __( 'Input file character encoding' ); ?></label>
                             </td>
                             <td class="quarter">
                                 <select name="options[encoding]" id="options-encoding" class="full">
@@ -113,7 +113,7 @@ $layouts = Layout::findAll();
 
                             </td>
                             <td class="quarter">
-                                <label for="options-file_locale"><?php echo __( 'File language' ); ?></label>
+                                <label for="options-file_locale"><?php echo __( 'Input file language' ); ?></label>
                             </td>
                             <td class="quarter">
                                 <select class="full"  onchange="javascript:$('#options-file_locale').val( $(this).val() + '.UTF-8' )">
