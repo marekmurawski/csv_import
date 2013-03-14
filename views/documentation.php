@@ -16,7 +16,6 @@ if ( !defined( 'IN_CMS' ) ) {
     exit();
 }
 ?>
+<?php Observer::notify('mm_core_stylesheet'); ?>
 <h1><?php echo __( 'Documentation' ); ?></h1>
-<p>
-    <?php echo __( 'Display your documentation here!' ); ?>
-</p>
+

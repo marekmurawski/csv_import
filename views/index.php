@@ -14,7 +14,7 @@
 $layouts        = Layout::findAll();
 $parent_page_id = isset( $_POST['parent_page_id'] ) ? $_POST['parent_page_id'] : 0;
 ?>
-
+<?php Observer::notify('mm_core_stylesheet'); ?>
 <h1><?php echo __( 'CSV Importer' ) ?></h1>
 <div id="mm_plugin">
     <form action="<?php echo get_url( 'plugin/csv_import' ); ?>" method="POST">
